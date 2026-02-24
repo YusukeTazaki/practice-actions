@@ -1,0 +1,63 @@
+name: GitHub Actions Learning Sample
+
+# ワークフローのトリガー（実行条件）
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # 手動で実行するための設定
+
+jobs:
+  # パターン1: 正常に成功するジョブ
+  job1_success:
+    name: 1. Success Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "Hello, GitHub Actions! このジョブは正常に終了します。"
+      - name: Simple calculation
+        run: |
+          result=$((10 + 20))
+          echo "10 + 20 の計算結果は $result です。"
+
+  # パターン2: 意図的に失敗させるジョブ
+  job2_failure:
+    name: 2. Failure Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Intentional failure
+        run: |
+          echo "このジョブは意図的にエラーを発生させます（exit 1）。"
+          exit 1
+      - name: Unreachable step
+        run: echo "前のステップで失敗するため、このメッセージは表示されません。"
+
+  # パターン3: 条件指定によってスキップされるジョブ
+  job3_conditional_skip:
+    name: 3. Conditional Skip Job
+    runs-on: ubuntu-latest
+    if: false # この条件がfalseのため、ジョブ全体がスキップされる
+    steps:
+      - name: This will not run
+        run: echo "このメッセージはジョブがスキップされるため表示されません。"
+
+  # パターン4: 依存するジョブの失敗によりスキップされるジョブ
+  job4_dependent_skip:
+    name: 4. Dependent Skip Job
+    needs: job2_failure # job2_failure が成功しない限り実行されない
+    runs-on: ubuntu-latest
+    steps:
+      - name: This will be skipped
+        run: echo "依存しているジョブが失敗したため、このジョブもスキップされます。"
+
+  # パターン5: 依存ジョブが失敗しても「常に実行」されるジョブ
+  job5_always_run:
+    name: 5. Always Run Job
+    needs: [job1_success, job2_failure]
+    if: always() # 直前のジョブの成否に関わらず必ず実行される
+    runs-on: ubuntu-latest
+    steps:
+      - name: Always run message
+        run: |
+          echo "前のジョブが失敗していても、if: always() の指定があるためこのジョブは実行されます。"
+          echo "（例：エラー時の通知や、一時ファイルのクリーンアップなどに使われます）"
