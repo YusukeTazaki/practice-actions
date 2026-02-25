@@ -1,0 +1,29 @@
+name: GitHub Actions Learning Sample
+
+# ワークフローのトリガー（実行条件）
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # 手動で実行するための設定
+
+jobs:
+  # 1つ目のジョブ（実質的なビルドステージ）
+  build_job:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ビルドを実行します"
+
+  # 2つ目のジョブ（実質的なテストステージ）
+  test_job:
+    needs: build_job # ← ここがポイント！ build_job が成功しないと動かない
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "テストを実行します"
+
+  # 3つ目のジョブ（実質的なデプロイステージ）
+  deploy_job:
+    needs: test_job # ← test_job が成功しないと動かない
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "デプロイを実行します"
