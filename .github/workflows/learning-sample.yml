@@ -24,6 +24,7 @@ jobs:
   job2_failure:
     name: 2. Failure Job
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Intentional failure
         run: |
