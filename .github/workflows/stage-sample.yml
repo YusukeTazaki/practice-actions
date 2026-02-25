@@ -1,4 +1,4 @@
-name: GitHub Actions Learning Sample
+name: GitHub Actions Stage Sample
 
 # ワークフローのトリガー（実行条件）
 on:
